@@ -7,6 +7,9 @@ using CurrencyConverter.Models;
 
 namespace CurrencyConverter
 {
+    /// <summary>
+    /// Read the input file of the program.
+    /// </summary>
     public class InputFile
     {
         private readonly string path;
@@ -17,6 +20,9 @@ namespace CurrencyConverter
 
         public int Amount { get; private set; }
 
+        /// <summary>
+        /// Store rates as tuples of source currency, tagret currency, exchange rate.
+        /// </summary>
         public IList<(Currency from, Currency to, decimal rate)> Rates { get; private set; } = new List<(Currency, Currency, decimal)>();
 
         public InputFile(string path)
@@ -27,7 +33,7 @@ namespace CurrencyConverter
         public async Task Read()
         {
             string cd = Directory.GetCurrentDirectory();
-            string fullPath = System.IO.Path.Combine(cd, path);
+            string fullPath = Path.Combine(cd, path);
             string[] lines = await File.ReadAllLinesAsync(fullPath);
 
             if (lines.Length < 2)
@@ -35,25 +41,22 @@ namespace CurrencyConverter
                 throw new ApplicationException("The input file must contains at least 2 lines");
             }
 
+            // First line
             string[] first = lines[0].Split(";");
-
-            SourceCurrency = new Currency(first[0]);
-            TargetCurrency = new Currency(first[2]);
+            SourceCurrency = first[0];
+            TargetCurrency = first[2];
             Amount = int.Parse(first[1]);
 
-            string second = lines[1];
-            int nbRates = int.Parse(second);
+            // Second line ignore, reading rates until end of file
 
-            if (nbRates > 0)
+            for (int i = 2; i != lines.Length; i++)
             {
-                for (int i = 2; i != lines.Length; i++)
-                {
-                    string[] rateParts = lines[i].Split(";");
-                    var from = new Currency(rateParts[0]);
-                    var to = new Currency(rateParts[1]);
-                    decimal rate = Decimal.Parse(rateParts[2], CultureInfo.InvariantCulture);
-                    Rates.Add((from, to, rate));
-                }
+                string[] rateParts = lines[i].Split(";");
+                // Currencies created implicitly here
+                var from = rateParts[0];
+                var to = rateParts[1];
+                decimal rate = Decimal.Parse(rateParts[2], CultureInfo.InvariantCulture);
+                Rates.Add((from, to, rate));
             }
         }
     }

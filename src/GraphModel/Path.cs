@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CurrencyConverter.Extensions;
-using CurrencyConverter.GraphModel;
+using CurrencyConverter.Models;
 
-namespace CurrencyConverter.Models
+namespace CurrencyConverter.GraphModel
 {
+    /// <summary>
+    /// Represents of path of edges from a source currency to a target currency.
+    /// </summary>
     public class Path : IEnumerable<Edge>
     {
         private IList<Edge> edges = new List<Edge>();
@@ -22,23 +25,33 @@ namespace CurrencyConverter.Models
             To = to;
         }
 
+        /// <summary>
+        /// Insert a segment at the beginning of the path.
+        /// </summary>
         public void Prepend(Edge previousEdge)
         {
             edges.Insert(0, previousEdge);
             Length++;
         }
 
-        public int ConvertThrough(int amount) =>
+        /// <summary>
+        /// Find the equivalent amount in the target currency by running the initial amount through the path of exchange rates.
+        /// </summary>
+        public int Convert(int amount) =>
             edges
                 .Aggregate<Edge, decimal>(
                     amount,
                     (aggregate, edge) =>
                     {
+                        // Each rate is multiplied to the previous then rounded
                         aggregate *= edge.Rate;
                         return aggregate.Round4();
                     })
                 .Round0();
 
+        /// <summary>
+        /// Check that all segments of the path are properly connected from start to finish.
+        /// </summary>
         public bool IsValid()
         {
             var next = From;

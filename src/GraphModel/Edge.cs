@@ -3,6 +3,9 @@ using CurrencyConverter.Extensions;
 
 namespace CurrencyConverter.GraphModel
 {
+    /// <summary>
+    /// The edge of a graph, representing an exchange rate between two currencies.
+    /// </summary>
     public class Edge : IEquatable<Edge>
     {
         public Node From { get; private set; }
@@ -18,6 +21,9 @@ namespace CurrencyConverter.GraphModel
             Rate = rate;
         }
 
+        /// <summary>
+        /// Inverse the exchange rate in order to convert from target currency to source currency. 
+        /// </summary>
         public void Reverse()
         {
             var oldFrom = From;
@@ -26,12 +32,15 @@ namespace CurrencyConverter.GraphModel
             Rate = Rate.Inverse();
         }
 
+        /// <summary>
+        /// Check that two edges are equivalent, even if reversed.
+        /// </summary>
         public bool HasEquivalentRate(Edge other) =>
             From == other.From && To == other.To
                 ? Rate == other.Rate
                 : Rate.Inverse() == other.Rate;
 
-        public override string ToString() => $"Edge {From?.Currency}--{Rate}-->{To?.Currency}";
+        public override string ToString() => $"Edge {From?.Currency}--->{To?.Currency}@{Rate}";
 
         public bool Equals(Edge other) =>
             (From == other.From && To == other.To) ||

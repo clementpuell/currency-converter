@@ -1,4 +1,3 @@
-using CurrencyConverter.Models;
 using Xunit;
 
 namespace CurrencyConverter.Tests.Models

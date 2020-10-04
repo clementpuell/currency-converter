@@ -5,6 +5,9 @@ using CurrencyConverter.Models;
 
 namespace CurrencyConverter.GraphModel
 {
+    /// <summary>
+    /// A node of the graph, representing a currency participating in exchange rates.
+    /// </summary>
     public class Node : IEquatable<Node>
     {
         public Currency Currency { get; }
@@ -20,6 +23,10 @@ namespace CurrencyConverter.GraphModel
 
         public void Connect(Edge edge) => Edges.Add(edge);
 
+        /// <summary>
+        /// Gets the edge connecting this node to another one.
+        /// The returned edge may be reversed to be oriented towards the neighbor.
+        /// </summary>
         public Edge GetOrientedEdgeTo(Node neighbor)
         {
             var edge = Edges.SingleOrDefault(e => e.From == neighbor || e.To == neighbor);
@@ -30,11 +37,6 @@ namespace CurrencyConverter.GraphModel
 
             return edge;
         }
-
-        // public Node AdvanceTowards(Currency currency)
-        // {
-        //     throw new NotImplementedException();
-        // }
 
         public override string ToString() => $"Node {Currency} (connected to {string.Join(",", Edges)})";
 

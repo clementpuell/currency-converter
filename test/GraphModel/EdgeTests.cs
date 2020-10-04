@@ -1,7 +1,5 @@
-using System;
 using CurrencyConverter.Extensions;
 using CurrencyConverter.GraphModel;
-using CurrencyConverter.Models;
 using Xunit;
 
 namespace CurrencyConverter.Tests.GraphModel
@@ -21,7 +19,7 @@ namespace CurrencyConverter.Tests.GraphModel
         }
 
         [Fact]
-        public void Should_Be_Equals_Reversed()
+        public void Should_Be_Equals_When_Reversed()
         {
             var edge1 = new Edge(node1, node2, default);
             var edge2 = new Edge(node2, node1, default);

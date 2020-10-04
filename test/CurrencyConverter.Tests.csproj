@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-  <None Update="*.csv" CopyToOutputDirectory="Always" />
-</ItemGroup>
+    <None Update="**/*.csv" CopyToOutputDirectory="Always" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />

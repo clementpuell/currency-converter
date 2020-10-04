@@ -5,7 +5,7 @@ using CurrencyConverter.Models;
 
 namespace CurrencyConverter
 {
-    class Program
+    public class Program
     {
         static async Task Main(string[] args)
         {
@@ -26,29 +26,41 @@ namespace CurrencyConverter
             Console.WriteLine(outPath);
         }
 
-        static async Task<InputFile> ReadFile(string path)
+        /// <summary>
+        /// Read input file.
+        /// </summary>
+        public static async Task<InputFile> ReadFile(string path)
         {
             var file = new InputFile(path);
             await file.Read();
             return file;
         }
 
-        static Graph BuildGraph(InputFile file)
+        /// <summary>
+        /// Build a graph representing all possible exchange rates.
+        /// </summary>
+        public static Graph BuildGraph(InputFile file)
         {
             var graph = new Graph(file);
             graph.Build();
             return graph;
         }
 
-        static Path FindPath(Graph graph, Currency from, Currency to)
+        /// <summary>
+        /// Find the shortest path between two currencies in the graph.
+        /// </summary>
+        public static Path FindPath(Graph graph, Currency from, Currency to)
         {
             var dijkstra = new Dijkstra(graph);
             return dijkstra.Solve(from, to);
         }
 
-        static int ConvertAmount(Path path, int amount)
+        /// <summary>
+        /// Convert the source amount using the found path.
+        /// </summary>
+        public static int ConvertAmount(Path path, int amount)
         {
-            return path.ConvertThrough(amount);
+            return path.Convert(amount);
         }
     }
 }

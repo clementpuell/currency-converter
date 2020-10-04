@@ -1,13 +1,15 @@
 using System;
-using System.Collections.Generic;
 
 namespace CurrencyConverter.Models
 {
-    public struct Currency : IEquatable<Currency>
+    /// <summary>
+    /// Represents a currency participating in echange rates.
+    /// </summary>
+    public readonly struct Currency : IEquatable<Currency>
     {
-        public string Code { get; }
+        public readonly string Code { get; }
 
-        internal Currency(string code)
+        public Currency(string code)
         {
             Code = code;
         }
@@ -20,27 +22,6 @@ namespace CurrencyConverter.Models
         public static bool operator ==(Currency a, Currency b) => a.Equals(b);
         public static bool operator !=(Currency a, Currency b) => !(a == b);
 
-        public static implicit operator Currency(string code) => CurrencyPool.Create(code);
-    }
-
-    public class CurrencyPool
-    {
-        private static CurrencyPool instance = new CurrencyPool();
-
-        private readonly IDictionary<string, Currency> pool = new Dictionary<string, Currency>();
-
-        private CurrencyPool() { }
-
-        public static Currency Create(string code)
-        {
-            if (instance.pool.TryGetValue(code, out var existing))
-            {
-                return existing;
-            }
-
-            var @new = new Currency(code);
-            instance.pool.Add(code, @new);
-            return @new;
-        }
+        public static implicit operator Currency(string code) => new Currency(code);
     }
 }

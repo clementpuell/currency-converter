@@ -1,57 +1,34 @@
 using CurrencyConverter.GraphModel;
-using CurrencyConverter.Models;
 using Xunit;
 
 namespace CurrencyConverter.Tests.GraphModel
 {
     public class GraphTests
     {
-        private readonly InputFile file1;
+        private readonly InputFile file;
 
         public GraphTests()
         {
-            file1 = new InputFile("test-valid-input-file-1.csv");
-            file1.Read().Wait();
+            file = new InputFile("TestFiles/sample-input-file.csv");
+            file.Read().Wait();
         }
 
         [Fact]
         public void Should_Build_Sample_Graph()
         {
-            var graph = new Graph(file1);
+            var graph = new Graph(file);
 
-            var expectedEge1 = new Edge(
-                new Node("AUD"),
-                new Node("CHF"),
-                0.9661m);
-            var expectedEge2 = new Edge(
-                new Node("JPY"),
-                new Node("KRW"),
-                13.1151m);
-            var expectedEge3 = new Edge(
-                new Node("EUR"),
-                new Node("CHF"),
-                1.2053m);
-            var expectedEge4 = new Edge(
-                new Node("AUD"),
-                new Node("JPY"),
-                86.0305m);
-            var expectedEge5 = new Edge(
-                new Node("EUR"),
-                new Node("USD"),
-                1.2989m);
-            var expectedEge6 = new Edge(
-                new Node("JPY"),
-                new Node("INR"),
-                0.6571m);
-            var expectedEge7 = new Edge(
-                new Node("KRW"),
-                new Node("USD"),
-                0.0009m);
+            var expectedEge1 = new Edge(new Node("AUD"), new Node("CHF"), 0.9661m);
+            var expectedEge2 = new Edge(new Node("JPY"), new Node("KRW"), 13.1151m);
+            var expectedEge3 = new Edge(new Node("EUR"), new Node("CHF"), 1.2053m);
+            var expectedEge4 = new Edge(new Node("AUD"), new Node("JPY"), 86.0305m);
+            var expectedEge5 = new Edge(new Node("EUR"), new Node("USD"), 1.2989m);
+            var expectedEge6 = new Edge(new Node("JPY"), new Node("INR"), 0.6571m);
 
             graph.Build();
 
             Assert.Equal(7, graph.Nodes.Count);
-            Assert.Equal(7, graph.Edges.Count);
+            Assert.Equal(6, graph.Edges.Count);
             Assert.Contains(expectedEge1, graph.Edges);
             Assert.Contains(expectedEge2, graph.Edges);
             Assert.Contains(expectedEge3, graph.Edges);
@@ -61,9 +38,9 @@ namespace CurrencyConverter.Tests.GraphModel
         }
 
         [Fact]
-        public void Should_Find_Starting_Node()
+        public void Should_Find_Node()
         {
-            var graph = new Graph(file1);
+            var graph = new Graph(file);
             graph.Build();
 
             var eurNode = graph.FindNode("EUR");
@@ -74,9 +51,9 @@ namespace CurrencyConverter.Tests.GraphModel
         }
 
         [Fact]
-        public void Should_Not_Find_Starting_Node_When_Not_Exists()
+        public void Should_Not_Find_Node_When_Not_Exists()
         {
-            var graph = new Graph(file1);
+            var graph = new Graph(file);
             graph.Build();
 
             var kwuNode = graph.FindNode("KWU");

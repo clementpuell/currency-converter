@@ -6,15 +6,28 @@ using CurrencyConverter.Models;
 
 namespace CurrencyConverter
 {
+    /// <summary>
+    /// Implements the Dijkstra's algorithm to find the shortest path between two given nodes of a graph.
+    /// </summary>
     public class Dijkstra
     {
         private readonly Graph graph;
 
         private Path shortestPath;
 
-        private Node currentNode;
+        /// <summary>
+        /// List of unvisited nodes, along their shortest distance to the start.
+        /// </summary>
         private IDictionary<Node, int> unvisited;
+        
+        /// <summary>
+        /// List of shortest distances to the start.
+        /// </summary>
         private IDictionary<Node, int> distances;
+
+        /// <summary>
+        /// List of previous node through the shortest path.
+        /// </summary>
         private IDictionary<Node, Node> previous;
 
         public Dijkstra(Graph graph)
@@ -22,6 +35,9 @@ namespace CurrencyConverter
             this.graph = graph;
         }
 
+        /// <summary>
+        /// Find the shortest path between the two given currencies.
+        /// </summary>
         public Path Solve(Currency from, Currency to)
         {
             shortestPath = new Path(from, to);
@@ -29,17 +45,20 @@ namespace CurrencyConverter
             var toNode = graph.FindNode(to);
 
             Init(fromNode);
-            Compute(toNode);
+            Explore(toNode);
             ConstructPath(fromNode, toNode);
 
             if (!shortestPath.IsValid())
             {
-                throw new ApplicationException($"Oops, looks like the found path is not valid: {shortestPath}");
+                throw new ApplicationException($"Looks like the found path is not entirely connected: {shortestPath}");
             }
 
             return shortestPath;
         }
 
+        /// <summary>
+        /// Mark nodes unvisited, with max distances and with unknown previous nodes.
+        /// </summary>
         private void Init(Node start)
         {
             unvisited = new Dictionary<Node, int>();
@@ -52,18 +71,20 @@ namespace CurrencyConverter
                 previous.Add(node, null);
             }
 
-            currentNode = start;
             SetDistance(start, 0);
         }
 
-        private void Compute(Node to)
+        /// <summary>
+        /// Explore the whole graph one neighbor at a time, keeping track its shortest distance to start.
+        /// </summary>
+        private void Explore(Node to)
         {
             while (unvisited.Count != 0)
             {
-                currentNode = FindNextUnvisitedNode();
+                var currentNode = FindNextUnvisitedNode();
                 unvisited.Remove(currentNode);
 
-                // Early return if the destination node has been reached
+                // Early return if the destination has already been reached
                 if (currentNode == to)
                 {
                     return;
@@ -74,6 +95,7 @@ namespace CurrencyConverter
                     int alternative = distances[currentNode] + 1;
                     if (alternative < distances[neighbor])
                     {
+                        // Shorter path found
                         SetDistance(neighbor, alternative);
                         previous[neighbor] = currentNode;
                     }
@@ -81,12 +103,17 @@ namespace CurrencyConverter
             }
         }
 
+        /// <summary>
+        /// Reconstruct the shortest path between the two given nodes, starting from the end.
+        /// The path consist of oriented edges, not nodes, as edges contains the currency rates.
+        /// </summary>
         private void ConstructPath(Node from, Node to)
         {
             var currentNode = to;
             var previousNode = previous[currentNode];
             while (previousNode != null)
             {
+                // The edge may be reversed here
                 var orientedEdge = previousNode.GetOrientedEdgeTo(currentNode);
                 shortestPath.Prepend(orientedEdge);
                 currentNode = previousNode;
@@ -103,6 +130,9 @@ namespace CurrencyConverter
             }
         }
 
+        /// <summary>
+        /// Gets the next node to explore, the one with the minimum distance.
+        /// </summary>
         private Node FindNextUnvisitedNode()
         {
             return unvisited.OrderBy(x => x.Value).First().Key;
