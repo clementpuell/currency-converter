@@ -27,8 +27,9 @@ namespace CurrencyConverter
 
         public async Task Read()
         {
-            // string wd = Directory.GetCurrentDirectory();
-            string[] lines = await File.ReadAllLinesAsync(path);
+            string cd = Directory.GetCurrentDirectory();
+            string fullPath = Path.Combine(cd, path);
+            string[] lines = await File.ReadAllLinesAsync(fullPath);
 
             if (lines.Length < 2)
             {

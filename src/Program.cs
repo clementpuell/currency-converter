@@ -20,7 +20,7 @@ namespace CurrencyConverter
 
         static async Task<InputFile> ReadFile(string path)
         {
-            var file = new InputFile("file1.csv");
+            var file = new InputFile(path);
             await file.Read();
             return file;
         }
