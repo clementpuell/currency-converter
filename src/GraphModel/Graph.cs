@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using CurrencyConverter.Models;
 
 namespace CurrencyConverter.GraphModel
 {
@@ -24,8 +26,14 @@ namespace CurrencyConverter.GraphModel
             // Two edges for the same nodes are considered identical, whatever their orientation.
             foreach (var line in file.Rates)
             {
-                var from = new Node(line.from);
-                var to = new Node(line.to);
+                var newFromNode = new Node(line.from);
+                _nodes.TryGetValue(newFromNode, out var from);
+                from ??= newFromNode;
+
+                var newToNode = new Node(line.to);
+                _nodes.TryGetValue(newToNode, out var to);
+                to ??= newToNode;
+
                 _nodes.Add(from);
                 _nodes.Add(to);
 
@@ -45,5 +53,7 @@ namespace CurrencyConverter.GraphModel
                 }
             }
         }
+
+        public Node FindNode(Currency currency) => _nodes.SingleOrDefault(n => n.Currency == currency);
     }
 }

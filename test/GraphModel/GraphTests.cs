@@ -59,5 +59,28 @@ namespace CurrencyConverter.Tests.GraphModel
             Assert.Contains(expectedEge5, graph.Edges);
             Assert.Contains(expectedEge6, graph.Edges);
         }
+
+        [Fact]
+        public void Should_Find_Starting_Node()
+        {
+            var graph = new Graph(file1);
+            graph.Build();
+
+            var eurNode = graph.FindNode("EUR");
+            Assert.Equal("EUR", eurNode.Currency);
+
+            var inrNode = graph.FindNode("INR");
+            Assert.Equal("INR", inrNode.Currency);
+        }
+
+        [Fact]
+        public void Should_Not_Find_Starting_Node_When_Not_Exists()
+        {
+            var graph = new Graph(file1);
+            graph.Build();
+
+            var kwuNode = graph.FindNode("KWU");
+            Assert.Null(kwuNode);
+        }
     }
 }

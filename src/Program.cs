@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CurrencyConverter.GraphModel;
+using CurrencyConverter.Models;
 
 namespace CurrencyConverter
 {
@@ -16,6 +17,13 @@ namespace CurrencyConverter
 
             var file = await ReadFile(args[0]);
             var graph = BuildGraph(file);
+            var shortestPath = FindPath(graph, file.SourceCurrency, file.TargetCurrency);
+            var result = ConvertAmount(shortestPath, file.Amount);
+
+            string outAmount = $"{file.Amount} {file.SourceCurrency} is {result} {file.TargetCurrency}.";
+            string outPath = $"Conversion path: {shortestPath}.";
+            Console.WriteLine(outAmount);
+            Console.WriteLine(outPath);
         }
 
         static async Task<InputFile> ReadFile(string path)
@@ -32,14 +40,15 @@ namespace CurrencyConverter
             return graph;
         }
 
-        static void FindPath()
+        static Path FindPath(Graph graph, Currency from, Currency to)
         {
-
+            var dijkstra = new Dijkstra(graph);
+            return dijkstra.Solve(from, to);
         }
 
-        static void ComputeAmount()
+        static int ConvertAmount(Path path, int amount)
         {
-
+            return path.ConvertThrough(amount);
         }
     }
 }

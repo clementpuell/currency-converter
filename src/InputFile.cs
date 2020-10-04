@@ -15,10 +15,9 @@ namespace CurrencyConverter
 
         public Currency TargetCurrency { get; private set; }
 
-        public decimal Amount { get; private set; }
+        public int Amount { get; private set; }
 
-        public IList<(Currency from, Currency to, decimal rate)> Rates { get; private set; } =
-            new List<(Currency from, Currency to, decimal rate)>();
+        public IList<(Currency from, Currency to, decimal rate)> Rates { get; private set; } = new List<(Currency, Currency, decimal)>();
 
         public InputFile(string path)
         {
@@ -28,7 +27,7 @@ namespace CurrencyConverter
         public async Task Read()
         {
             string cd = Directory.GetCurrentDirectory();
-            string fullPath = Path.Combine(cd, path);
+            string fullPath = System.IO.Path.Combine(cd, path);
             string[] lines = await File.ReadAllLinesAsync(fullPath);
 
             if (lines.Length < 2)

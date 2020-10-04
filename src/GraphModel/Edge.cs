@@ -31,7 +31,7 @@ namespace CurrencyConverter.GraphModel
                 ? Rate == other.Rate
                 : Rate.Inverse() == other.Rate;
 
-        public override string ToString() => $"Edge {From?.Currency}->{To?.Currency}@{Rate}";
+        public override string ToString() => $"Edge {From?.Currency}--{Rate}-->{To?.Currency}";
 
         public bool Equals(Edge other) =>
             (From == other.From && To == other.To) ||
