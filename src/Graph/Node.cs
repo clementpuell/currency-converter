@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CurrencyConverter.Models;
 
-namespace CurrencyConverter.GraphModel
+namespace CurrencyConverter.Graph
 {
     /// <summary>
     /// A node of the graph, representing a currency participating in exchange rates.
@@ -21,7 +21,15 @@ namespace CurrencyConverter.GraphModel
             Currency = currency;
         }
 
-        public void Connect(Edge edge) => Edges.Add(edge);
+        public void Connect(Edge edge)
+        {
+            if (edge.From != this && edge.To != this)
+            {
+                throw new ApplicationException($"Cannot connect edge {edge} to {this} because the node does not appear on either side of the edge.");
+            }
+
+            Edges.Add(edge);
+        }
 
         /// <summary>
         /// Gets the edge connecting this node to another one.

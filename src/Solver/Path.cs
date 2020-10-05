@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CurrencyConverter.Extensions;
+using CurrencyConverter.Graph;
 using CurrencyConverter.Models;
 
-namespace CurrencyConverter.GraphModel
+namespace CurrencyConverter.Solver
 {
     /// <summary>
     /// Represents of path of edges from a source currency to a target currency.
@@ -43,7 +44,7 @@ namespace CurrencyConverter.GraphModel
                     amount,
                     (aggregate, edge) =>
                     {
-                        // Each rate is multiplied to the previous then rounded
+                        // Each rate is multiplied with the next then rounded
                         aggregate *= edge.Rate;
                         return aggregate.Round4();
                     })
@@ -68,7 +69,7 @@ namespace CurrencyConverter.GraphModel
             return next == To;
         }
 
-        public override string ToString() => $"Path from {From} to {To} of length {Length}: {string.Join(" => ", edges)}";
+        public override string ToString() => $"Path from {From} to {To} of length {Length}: {{ {string.Join(" ; ", edges)} }}";
 
         public IEnumerator<Edge> GetEnumerator() => edges.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => edges.GetEnumerator();

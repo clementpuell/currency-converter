@@ -7,17 +7,13 @@ namespace CurrencyConverter.Tests.Models
         [Fact]
         public void Should_Be_Equals()
         {
-            var currency1 = "EUR";
-            var currency2 = "EUR";
-            Assert.Equal(currency1, currency2);
+            Assert.Equal("EUR", "EUR");
         }
 
         [Fact]
         public void Should_Be_Different()
         {
-            var currency1 = "EUR";
-            var currency2 = "USD";
-            Assert.NotEqual(currency1, currency2);
+            Assert.NotEqual("EUR", "USD");
         }
     }
 }

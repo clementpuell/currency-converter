@@ -22,7 +22,11 @@ namespace CurrencyConverter.Extensions
 
         public static decimal Inverse(this decimal value)
         {
-            decimal inverse = 1 / value;
+            decimal inverse = 0;
+            if (value != 0)
+            {
+                inverse = 1 / value;
+            }
             return inverse.Round4();
         }
     }

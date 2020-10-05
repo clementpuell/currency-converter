@@ -47,7 +47,7 @@ namespace CurrencyConverter
             TargetCurrency = first[2];
             Amount = int.Parse(first[1]);
 
-            // Second line ignore, reading rates until end of file
+            // Second line is ignored, rates are read until end of file
 
             for (int i = 2; i != lines.Length; i++)
             {

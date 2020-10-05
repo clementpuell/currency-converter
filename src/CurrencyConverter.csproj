@@ -6,4 +6,8 @@
     <RootNamespace>CurrencyConverter</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Update="**/*.csv" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
 </Project>

@@ -7,14 +7,14 @@ namespace CurrencyConverter.Tests
 {
     public class InputFileTests
     {
-        private string simpleFile = "./TestFiles/simple-input-file.csv";
+        private string basicFile = "./TestFiles/basic-input-file.csv";
         private string emptyFile = "./TestFiles/empty-input-file.csv";
         private string invalidFilePath = "./TestFiles/invalid-input-file.csv";
 
         [Fact]
         public async Task Should_Read_Valid_File()
         {
-            var file = new InputFile(simpleFile);
+            var file = new InputFile(basicFile);
             await file.Read();
 
             Assert.Equal("EUR", file.SourceCurrency);
@@ -34,7 +34,7 @@ namespace CurrencyConverter.Tests
             Assert.Equal("", file.SourceCurrency);
             Assert.Equal("", file.TargetCurrency);
             Assert.Equal(0m, file.Amount);
-            Assert.Equal(0, file.Rates.Count());
+            Assert.Empty(file.Rates);
         }
 
         [Fact]

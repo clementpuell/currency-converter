@@ -3,23 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using CurrencyConverter.Models;
 
-namespace CurrencyConverter.GraphModel
+namespace CurrencyConverter.Graph
 {
     /// <summary>
-    /// A graph of exhcnage rates, representing all possible direct conversion between currencies.
+    /// A graph of exchange rates, representing all possible direct conversion between currencies.
     /// </summary>
-    public class Graph
+    public class ConversionGraph
     {
-        private readonly InputFile file;
+        private readonly IList<(Currency from, Currency to, decimal rate)> _rates;
         private HashSet<Node> _nodes = new HashSet<Node>();
         private HashSet<Edge> _edges = new HashSet<Edge>();
 
         public ISet<Node> Nodes => _nodes;
         public ISet<Edge> Edges => _edges;
 
-        public Graph(InputFile file)
+        public ConversionGraph(InputFile file)
         {
-            this.file = file;
+            this._rates = file.Rates;
+        }
+
+        public ConversionGraph(params (Currency from, Currency to, decimal rate)[] rates)
+        {
+            this._rates = rates;
         }
 
         /// <summary>
@@ -30,7 +35,7 @@ namespace CurrencyConverter.GraphModel
             // De-duplicating will be done automatically by the sets, which will store each item at most once.
             // Two nodes for the same currency are considered identical.
             // Two edges for the same nodes are considered identical, whatever their orientation.
-            foreach (var line in file.Rates)
+            foreach (var line in _rates)
             {
                 // Either create new nodes, or reuse existing ones for the same currency.
                 var from = GetOrCreateNode(line.from);
@@ -69,5 +74,7 @@ namespace CurrencyConverter.GraphModel
         /// Gets the single node representing this currency.
         /// </summary>
         public Node FindNode(Currency currency) => _nodes.SingleOrDefault(n => n.Currency == currency);
+
+        public override string ToString() => $"Graph: {{ {string.Join(" ; ", Edges)} }}";
     }
 }

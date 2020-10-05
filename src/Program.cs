@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CurrencyConverter.GraphModel;
+using CurrencyConverter.Graph;
 using CurrencyConverter.Models;
+using CurrencyConverter.Solver;
 
 namespace CurrencyConverter
 {
@@ -11,19 +12,25 @@ namespace CurrencyConverter
         {
             if (args.Length != 1)
             {
-                Console.WriteLine("Usage: CurrencyConverter.exe <path to file>");
+                WriteError("Usage: CurrencyConverter.exe <path to file>");
                 return;
             }
 
-            var file = await ReadFile(args[0]);
-            var graph = BuildGraph(file);
-            var shortestPath = FindPath(graph, file.SourceCurrency, file.TargetCurrency);
-            var result = ConvertAmount(shortestPath, file.Amount);
+            try
+            {
+                var file = await ReadFile(args[0]);
+                var graph = BuildGraph(file);
+                var shortestPath = FindPath(graph, file.SourceCurrency, file.TargetCurrency);
+                CheckPath(graph, shortestPath);
+                var result = ConvertAmount(shortestPath, file.Amount);
 
-            string outAmount = $"{file.Amount} {file.SourceCurrency} is {result} {file.TargetCurrency}.";
-            string outPath = $"Conversion path: {shortestPath}.";
-            Console.WriteLine(outAmount);
-            Console.WriteLine(outPath);
+                WriteSuccess($"{file.Amount} {file.SourceCurrency} is {result} {file.TargetCurrency}.");
+                WriteSuccess($"Conversion path: {shortestPath}.");
+            }
+            catch (Exception ex)
+            {
+                WriteError(ex.Message);
+            }
         }
 
         /// <summary>
@@ -39,9 +46,9 @@ namespace CurrencyConverter
         /// <summary>
         /// Build a graph representing all possible exchange rates.
         /// </summary>
-        public static Graph BuildGraph(InputFile file)
+        public static ConversionGraph BuildGraph(InputFile file)
         {
-            var graph = new Graph(file);
+            var graph = new ConversionGraph(file);
             graph.Build();
             return graph;
         }
@@ -49,10 +56,21 @@ namespace CurrencyConverter
         /// <summary>
         /// Find the shortest path between two currencies in the graph.
         /// </summary>
-        public static Path FindPath(Graph graph, Currency from, Currency to)
+        public static Path FindPath(ConversionGraph graph, Currency from, Currency to)
         {
-            var dijkstra = new Dijkstra(graph);
-            return dijkstra.Solve(from, to);
+            var solver = new Dijkstra(graph);
+            return solver.Solve(from, to);
+        }
+
+        /// <summary>
+        /// Validate that the found path is valid, i.e. entirely connected. Throws otherwise.
+        /// </summary>
+        public static void CheckPath(ConversionGraph graph, Path path)
+        {
+            if (!path.IsValid())
+            {
+                throw new ApplicationException($"The found path is not entirely connected:\r\n\t{path}\r\n\t{graph}.");
+            }
         }
 
         /// <summary>
@@ -61,6 +79,20 @@ namespace CurrencyConverter
         public static int ConvertAmount(Path path, int amount)
         {
             return path.Convert(amount);
+        }
+
+        private static void WriteSuccess(string value)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(value);
+            Console.ResetColor();
+        }
+
+        private static void WriteError(string value)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(value);
+            Console.ResetColor();
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using CurrencyConverter.Extensions;
 
-namespace CurrencyConverter.GraphModel
+namespace CurrencyConverter.Graph
 {
     /// <summary>
     /// The edge of a graph, representing an exchange rate between two currencies.
@@ -35,10 +35,15 @@ namespace CurrencyConverter.GraphModel
         /// <summary>
         /// Check that two edges are equivalent, even if reversed.
         /// </summary>
-        public bool HasEquivalentRate(Edge other) =>
-            From == other.From && To == other.To
-                ? Rate == other.Rate
-                : Rate.Inverse() == other.Rate;
+        public bool HasEquivalentRate(Edge other)
+        {
+            if (From == other.From && To == other.To)
+            {
+                return Rate == other.Rate;
+            }
+            
+            return Rate.Inverse() == other.Rate || Rate == other.Rate.Inverse();
+        }
 
         public override string ToString() => $"Edge {From?.Currency}--->{To?.Currency}@{Rate}";
 

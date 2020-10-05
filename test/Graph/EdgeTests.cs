@@ -1,8 +1,8 @@
 using CurrencyConverter.Extensions;
-using CurrencyConverter.GraphModel;
+using CurrencyConverter.Graph;
 using Xunit;
 
-namespace CurrencyConverter.Tests.GraphModel
+namespace CurrencyConverter.Tests.Graph
 {
     public class EdgeTests
     {

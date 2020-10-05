@@ -1,17 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using CurrencyConverter.GraphModel;
+using CurrencyConverter.Graph;
 using CurrencyConverter.Models;
 
-namespace CurrencyConverter
+namespace CurrencyConverter.Solver
 {
     /// <summary>
-    /// Implements the Dijkstra's algorithm to find the shortest path between two given nodes of a graph.
+    /// Implements the Dijkstra's algorithm to find the shortest path between two given currencies of a graph.
     /// </summary>
-    public class Dijkstra
+    public class Dijkstra : IPathSolver
     {
-        private readonly Graph graph;
+        private readonly ConversionGraph graph;
 
         private Path shortestPath;
 
@@ -19,7 +18,7 @@ namespace CurrencyConverter
         /// List of unvisited nodes, along their shortest distance to the start.
         /// </summary>
         private IDictionary<Node, int> unvisited;
-        
+
         /// <summary>
         /// List of shortest distances to the start.
         /// </summary>
@@ -30,7 +29,7 @@ namespace CurrencyConverter
         /// </summary>
         private IDictionary<Node, Node> previous;
 
-        public Dijkstra(Graph graph)
+        public Dijkstra(ConversionGraph graph)
         {
             this.graph = graph;
         }
@@ -44,13 +43,11 @@ namespace CurrencyConverter
             var fromNode = graph.FindNode(from);
             var toNode = graph.FindNode(to);
 
-            Init(fromNode);
-            Explore(toNode);
-            ConstructPath(fromNode, toNode);
-
-            if (!shortestPath.IsValid())
+            if (fromNode != null && toNode != null)
             {
-                throw new ApplicationException($"Looks like the found path is not entirely connected: {shortestPath}");
+                Init(fromNode);
+                Explore(toNode);
+                ConstructPath(fromNode, toNode);
             }
 
             return shortestPath;

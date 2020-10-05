@@ -1,7 +1,8 @@
-using CurrencyConverter.GraphModel;
+using CurrencyConverter.Graph;
+using CurrencyConverter.Solver;
 using Xunit;
 
-namespace CurrencyConverter.Tests.GraphModel
+namespace CurrencyConverter.Tests.Solver
 {
     public class PathTests
     {
